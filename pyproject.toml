@@ -1,0 +1,64 @@
+[project]
+name = "ondemandproxy"
+# Still 0.0.1-dev because lazy to keep this line updated over time
+version = "0.0.1-dev"  # REQUIRED, although can be dynamic
+description = "Proxy to start your service on demand."
+readme = "README.md"
+requires-python = "==3.14.3"
+license = {file = "LICENSE"}
+keywords = ["imap", "python"]
+
+authors = [
+    {name = "pofilo", email = "git@pofilo.fr"},
+]
+maintainers = [
+    {name = "pofilo", email = "git@pofilo.fr"},
+]
+
+classifiers = [
+    "4 - Beta",
+    "Programming Language :: Python"
+]
+
+dependencies = [
+]
+
+[project.optional-dependencies]
+# $ pip install .[linters]
+linters = [
+    "ruff==0.15.5",
+]
+
+[project.urls]
+Repository = "https://git.pofilo.fr/pofilo/on-demand-proxy"
+"Bug Tracker" = "https://git.pofilo.fr/pofilo/on-demand-proxy/issues"
+Changelog = "https://git.pofilo.fr/pofilo/on-demand-proxy/graph"
+
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["ALL"]
+# https://docs.astral.sh/ruff/rules/
+ignore = [
+    "D105",  # undocumented-magic-method
+    "D107",  # undocumented-public-init
+    "D200",  # fits-on-one-line
+    "D203",  # one-blank-line-before-class
+    "D205",  # blank-line-after-summary
+    "D212",  # multi-line-summary-first-line
+    "FIX002",  # line-contains-todo
+    # Disagree with those rules
+    "UP015",  # redundant-open-modes
+    # False positives
+    "ERA001",  # commented-out-code
+    # "The following rules may cause conflicts when used with the formatter"
+    "COM812",  # missing-trailing-comma
+    "ISC001",  # single-line-implicit-string-concatenation
+]
+
+fixable = ["ALL"]
+unfixable = []
+
