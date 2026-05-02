@@ -6,7 +6,7 @@ description = "Proxy to start your service on demand."
 readme = "README.md"
 requires-python = "==3.14.3"
 license = {file = "LICENSE"}
-keywords = ["imap", "python"]
+keywords = ["python", "docker"]
 
 authors = [
     {name = "pofilo", email = "git@pofilo.fr"},
@@ -21,12 +21,18 @@ classifiers = [
 ]
 
 dependencies = [
+    "aiohttp==3.13.5",
+    "docker==7.1.0",
+    "pyyaml==6.0.3",
 ]
+
+[project.scripts]
+ondemandproxy = "ondemandproxy.on_demand_proxy:run"
 
 [project.optional-dependencies]
 # $ pip install .[linters]
 linters = [
-    "ruff==0.15.5",
+    "ruff==0.15.12",
 ]
 
 [project.urls]
@@ -34,6 +40,13 @@ Repository = "https://git.pofilo.fr/pofilo/on-demand-proxy"
 "Bug Tracker" = "https://git.pofilo.fr/pofilo/on-demand-proxy/issues"
 Changelog = "https://git.pofilo.fr/pofilo/on-demand-proxy/graph"
 
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+ondemandproxy = ["templates/*.html"]
 
 [tool.ruff]
 line-length = 88

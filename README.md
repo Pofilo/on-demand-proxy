@@ -10,6 +10,11 @@ Proxy to start your service on demand.
 
 ## Installation
 
+### Docker
+
+Build the image with something like: `docker build -t on-demand-proxy:latest .`
+Then, check the example for Stirling PDF in the example folder.
+
 ### Manual with a virtual environment
 
 + Download the last stable version [available here](https://git.pofilo.fr/pofilo/on-demand-proxy/tags)
@@ -24,7 +29,7 @@ Proxy to start your service on demand.
 Install "pre-commit" hook: `ln -s $(pwd)/hook-pre-commit .git/hooks/pre-commit`.
 Linters and typos will be checked before committing.
 
-### Linters
+### Linters
 
 + Install dependencies: `pip install .[linters]`
 + Run linters:

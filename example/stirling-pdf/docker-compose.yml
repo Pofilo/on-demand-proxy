@@ -1,0 +1,17 @@
+# This is the target service managed by the on-demand proxy.
+services:
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    container_name: "stirling-pdf"
+    restart: "no"  # Don't auto-restart: the proxy manages lifecycle
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - SHOW_SURVEY=false
+    volumes:
+      - /absolute/path/to/stirling-pdf/configs:/configs
+    networks:
+      - stirling-pdf-backend
+networks:
+  stirling-pdf-backend:
+    name: stirling-pdf-backend
+    external: true

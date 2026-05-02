@@ -1,0 +1,42 @@
+services:
+  odp-stirling-pdf:
+    image: on-demand-proxy:latest  # or whatever the name you provide
+    container_name: "odp-stirling-pdf"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-frontend"
+      - "traefik.http.services.odp-stirling-pdf.loadbalancer.server.port=8080"
+      - "traefik.http.routers.odp-stirling-pdf.rule=Host(`pdf.example.com`)"
+      - "traefik.http.routers.odp-stirling-pdf.entrypoints=websecure"
+      # TLS and security
+      - "traefik.http.routers.odp-stirling-pdf.tls=true"
+      - "traefik.http.routers.odp-stirling-pdf.tls.options=youroptions@file"
+      # Add X-On-Demand-Service header so the proxy knows which service to wake
+      - "traefik.http.middlewares.odp-stirling-pdf-header.headers.customrequestheaders.X-On-Demand-Service=stirling-pdf"
+      - "traefik.http.routers.odp-stirling-pdf.middlewares=odp-stirling-pdf-header"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config.yml:/app/config.yml:ro
+      # Mount the compose files of managed services so the proxy can start/stop them
+      - ../stirling-pdf/:/opt/stirling-pdf/:ro
+    networks:
+      - traefik-frontend
+      - stirling-pdf-backend
+    environment:
+      - CONFIG_PATH=/app/config.yml
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: "10m"
+networks:
+  traefik-frontend:
+    name: traefik-frontend
+    external: true
+  stirling-pdf-backend:
+    name: stirling-pdf-backend
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

@@ -5,6 +5,9 @@ LABEL maintainer="Pofilo <git@pofilo.fr>"
 
 ENV PYTHONUNBUFFERED=1
 
+# Install Docker CLI for docker compose commands
+RUN apk add --no-cache docker-cli docker-cli-compose
+
 WORKDIR /ondemandproxy
 COPY . .
 RUN pip install . --root-user-action=ignore && rm -fr /ondemandproxy

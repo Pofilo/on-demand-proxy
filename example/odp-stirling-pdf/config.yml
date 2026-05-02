@@ -1,0 +1,15 @@
+# On-demand proxy configuration
+proxy:
+  host: "0.0.0.0"
+  port: 8080
+
+service:
+  name: Stirling PDF
+  # Path inside the docker proxy (see the volume option provided)
+  docker_compose_file: /opt/stirling-pdf/docker-compose.yml
+  # Container name to check status and proxy to
+  container_name: stirling-pdf
+  # Internal URL to proxy requests to once the service is running
+  target_url: "http://stirling-pdf:8080"
+  # Stop the service after this duration of inactivity (1 hour here)
+  idle_timeout: 3600
