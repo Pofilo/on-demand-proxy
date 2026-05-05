@@ -11,5 +11,7 @@ service:
   container_name: stirling-pdf
   # Internal URL to proxy requests to once the service is running
   target_url: "http://stirling-pdf:8080"
-  # Stop the service after this duration of inactivity (1 hour here)
+  # Stop the service after this duration of inactivity (seconds)
   idle_timeout: 3600
+  # Retry After value for the loading page (seconds)
+  retry_after: 3

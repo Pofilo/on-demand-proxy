@@ -26,6 +26,7 @@ import yaml
 from aiohttp import ClientSession, ClientTimeout, web
 
 CONFIG_PATH = os.environ.get("CONFIG_PATH", "/app/config.yml")
+DEFAULT_RETRY_AFTER = 3
 
 
 logging.basicConfig(
@@ -156,6 +157,7 @@ class OnDemandProxy:
             self.container_name = service_config["container_name"]
             self.target_url = service_config["target_url"]
             self.idle_timeout = int(service_config["idle_timeout"])
+            self.retry_after = service_config.get("retry_after", DEFAULT_RETRY_AFTER)
         except ValueError:
             self.logger.exception("Missing mandatory value in conf")
             raise
@@ -164,6 +166,10 @@ class OnDemandProxy:
 
         template_path = Path(__file__).parent / "templates" / "loading.html"
         self.loading_html = template_path.read_text()
+        self.loading_html = self.loading_html.replace("{{SERVICE_NAME}}", self.name)
+        self.loading_html = self.loading_html.replace(
+            "{{RETRY_AFTER}}", str(self.retry_after)
+        )
 
         self._idle_task = asyncio.create_task(self._idle_checker())
         self.logger.info("On-demand proxy started for service '%s'", self.name)
@@ -183,11 +189,11 @@ class OnDemandProxy:
         """
         Return an HTML loading page response.
         """
-        html = self.loading_html.replace("{{SERVICE_NAME}}", self.name)
         return web.Response(
-            text=html,
+            text=self.loading_html,
             status=503,
             content_type="text/html",
+            headers={"Retry-After": str(self.retry_after)},
         )
 
     async def _proxy_handler(self, request: web.Request) -> web.Response:
