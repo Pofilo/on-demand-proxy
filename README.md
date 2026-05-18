@@ -44,6 +44,15 @@ ruff check
 + Install [typos](https://github.com/crate-ci/typos)
 + Run it: `typos`
 
+
+## Notes
+
+Please note that using `/var/run/docker.sock:/var/run/docker.sock:ro` (in the `docker-compose.yml` example) is subject to errors in case of change done on the file (upgrade for examples).
+It could lead to errors like `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`.
+
+A solution is to replace this line by `/var/run/:/var/run/:ro` but there is much more unnecessary files shared to the docker container.
+Another possibility is to restart the container each time the socket is changed.
+
 ## License
 
 This project is licensed under the GNU GPL License. See the [LICENSE](https://git.pofilo.fr/pofilo/on-demand-proxy/src/branch/master/LICENSE) file for the full license text.
