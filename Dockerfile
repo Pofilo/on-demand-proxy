@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apk add --no-cache docker-cli docker-cli-compose
 
 WORKDIR /ondemandproxy
-COPY . .
+COPY src pyproject.toml ./
 RUN pip install . --root-user-action=ignore && rm -fr /ondemandproxy
 
 ENTRYPOINT ["ondemandproxy"]
