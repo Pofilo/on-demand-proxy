@@ -264,7 +264,9 @@ class OnDemandProxy:
 
         body = await request.read()
 
-        async with ClientSession(timeout=ClientTimeout(total=30)) as session:
+        async with ClientSession(
+            timeout=ClientTimeout(sock_read=300, sock_connect=10)
+        ) as session:
             try:
                 async with session.request(
                     method=request.method,
