@@ -262,8 +262,7 @@ class OnDemandProxy:
             if k.lower() not in non_forwardable_headers
         }
 
-        body = await request.read()
-
+        resp_stream = None
         async with ClientSession(
             timeout=ClientTimeout(sock_read=300, sock_connect=10)
         ) as session:
@@ -272,10 +271,9 @@ class OnDemandProxy:
                     method=request.method,
                     url=target_url,
                     headers=headers,
-                    data=body,
+                    data=request.content,
                     allow_redirects=False,
                 ) as resp:
-                    resp_body = await resp.read()
                     excluded_headers = non_forwardable_headers | {
                         "content-encoding",
                         "content-length",
@@ -285,13 +283,21 @@ class OnDemandProxy:
                         for k, v in resp.headers.items()
                         if k.lower() not in excluded_headers
                     }
-                    return web.Response(
-                        body=resp_body,
+                    resp_stream = web.StreamResponse(
                         status=resp.status,
                         headers=resp_headers,
                     )
-            except Exception:  # noqa: BLE001 (blind-except)
-                return self._get_loading_response()
+                    await resp_stream.prepare(request)
+                    async for chunk in resp.content.iter_chunked(64 * 1024):
+                        await resp_stream.write(chunk)
+                    await resp_stream.write_eof()
+                    return resp_stream
+
+            except Exception:
+                # Headers already sent mid-stream -> can't show the loading page.
+                if resp_stream is None or not resp_stream.prepared:
+                    return self._get_loading_response()
+                raise
 
 
 def run() -> None:
